@@ -14,6 +14,14 @@ from brain_simulation import (
 )
 import numpy as np
 
+# Demonstration constants
+CURRENT_INJECTION_START_MS = 10.0
+CURRENT_INJECTION_END_MS = 40.0
+STRONG_CURRENT = 15.0
+VERY_STRONG_CURRENT = 20.0
+MODERATE_CURRENT = 18.0
+FLASH_DURATION_MS = 10.0
+
 
 def demo_single_neuron():
     """Demonstrate a single neuron's action potential"""
@@ -173,8 +181,8 @@ def demo_hebbian_learning():
         for step in range(200):  # 20 ms per trial
             # Stimulate both neurons (correlated activity)
             if 50 <= step < 100:
-                pre.add_synaptic_input(20.0)  # Strong enough to spike
-                post.add_synaptic_input(18.0)  # Strong enough to spike too
+                pre.add_synaptic_input(VERY_STRONG_CURRENT)  # Strong enough to spike
+                post.add_synaptic_input(MODERATE_CURRENT)  # Strong enough to spike too
             
             pre_spiked = pre.update(sim.dt_ms)
             post_spiked = post.update(sim.dt_ms)
@@ -232,7 +240,7 @@ def demo_simple_network():
         # Apply sensory input (simulate visual stimulus)
         # Flash pattern: 10ms on, 10ms off
         time_ms = step * sim.dt_ms
-        epoch = int(time_ms / 10.0)
+        epoch = int(time_ms / FLASH_DURATION_MS)
         
         if epoch % 2 == 0:  # Flash on
             # Stimulate retina with strong current each step

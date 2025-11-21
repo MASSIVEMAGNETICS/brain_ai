@@ -14,7 +14,7 @@ Key features:
 """
 
 import numpy as np
-from typing import List, Dict, Optional, Set, Tuple
+from typing import List, Dict, Optional, Set, Tuple, Any
 from dataclasses import dataclass, field
 from enum import Enum
 import time
@@ -193,6 +193,7 @@ class SimulatedNeuron:
         self.voltage_history.clear()
 
 
+@dataclass
 class Synapse:
     """
     Synaptic connection between two neurons with adjustable weight.
@@ -201,6 +202,10 @@ class Synapse:
     - Synaptic transmission (spike -> current in post-synaptic neuron)
     - Hebbian learning (weight modification based on co-activity)
     """
+    
+    # Class constants for synaptic transmission and learning
+    SYNAPTIC_CURRENT_MULTIPLIER = 8.0  # Converts weight to current (mA)
+    LTD_SCALING_FACTOR = 0.005  # Relative strength of LTD vs LTP
     
     def __init__(
         self,
@@ -250,9 +255,9 @@ class Synapse:
         for _ in arrived_spikes:
             # Synaptic current magnitude depends on weight and neuron type
             if self.pre_neuron.neuron_type == NeuronType.INHIBITORY:
-                current = -self.weight * 8.0  # Inhibitory (negative current)
+                current = -self.weight * self.SYNAPTIC_CURRENT_MULTIPLIER  # Inhibitory
             else:  # Excitatory, Sensory, and Motor are all excitatory
-                current = self.weight * 8.0  # Excitatory (positive current)
+                current = self.weight * self.SYNAPTIC_CURRENT_MULTIPLIER  # Excitatory
             
             self.post_neuron.add_synaptic_input(current)
     
@@ -273,7 +278,7 @@ class Synapse:
         else:
             # Very weak LTD: presynaptic activity without postsynaptic response
             # Make this much weaker to avoid overpowering LTP
-            self.weight -= self.learning_rate * 0.005 * self.weight
+            self.weight -= self.learning_rate * self.LTD_SCALING_FACTOR * self.weight
         
         # Clamp weight to valid range
         self.weight = np.clip(self.weight, self.weight_min, self.weight_max)
@@ -508,7 +513,7 @@ class BrainSimulation:
             return self.neurons[neuron_id].spike_times
         return []
     
-    def get_statistics(self) -> Dict[str, any]:
+    def get_statistics(self) -> Dict[str, Any]:
         """Get simulation statistics"""
         return {
             'current_time_ms': self.current_time_ms,
