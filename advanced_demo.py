@@ -10,6 +10,7 @@ Demonstrates the advanced features of the brain simulation including:
 """
 
 import numpy as np
+import time
 from brain_simulation_advanced import (
     AdvancedBrainSimulation,
     MultiCompartmentNeuron,
@@ -529,5 +530,4 @@ def main():
 
 
 if __name__ == "__main__":
-    import time
     main()

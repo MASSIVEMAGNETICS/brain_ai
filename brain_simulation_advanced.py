@@ -19,6 +19,10 @@ from enum import Enum
 import time
 from collections import deque
 
+# Constants
+EPSILON = 1e-8  # Small value for numerical stability
+MAX_SPIKE_RATE_HZ = 100.0  # Maximum spike rate for sensory conversion
+
 # Try to import optional GPU acceleration libraries
 try:
     import torch
@@ -715,21 +719,21 @@ class ConnectomeBuilder:
         # Define major brain regions
         self.add_region(BrainRegion(
             name="V1", 
-            neuron_count=200_000_000,  # ~200 million neurons in V1
+            neuron_count=2e8,  # ~200 million neurons in V1
             region_type="cortical",
             position=(0, -50, 0)  # Approximate position
         ))
         
         self.add_region(BrainRegion(
             name="PFC",
-            neuron_count=500_000_000,  # Prefrontal cortex
+            neuron_count=5e8,  # Prefrontal cortex (500 million)
             region_type="cortical",
             position=(40, 20, 0)
         ))
         
         self.add_region(BrainRegion(
             name="Hippocampus",
-            neuron_count=40_000_000,
+            neuron_count=4e7,  # 40 million
             region_type="subcortical",
             position=(20, -20, -10)
         ))
@@ -979,10 +983,10 @@ class SensoryInputInterface:
             gray = image
         
         # Normalize to [0, 1]
-        normalized = (gray - gray.min()) / (gray.max() - gray.min() + 1e-8)
+        normalized = (gray - gray.min()) / (gray.max() - gray.min() + EPSILON)
         
         # Convert to spike rates (higher intensity = higher rate)
-        spike_rates = normalized.flatten() * 100.0  # Max 100 Hz
+        spike_rates = normalized.flatten() * MAX_SPIKE_RATE_HZ
         
         return spike_rates
     
@@ -1014,7 +1018,7 @@ class SensoryInputInterface:
             band_activities[i] = np.mean(power[start:end])
         
         # Convert to spike rates
-        spike_rates = (band_activities / (np.max(band_activities) + 1e-8)) * 100.0
+        spike_rates = (band_activities / (np.max(band_activities) + EPSILON)) * MAX_SPIKE_RATE_HZ
         
         return spike_rates
 
@@ -1046,7 +1050,7 @@ class MotorOutputInterface:
         """
         # Simple population vector decoding
         # Normalize activity
-        normalized = motor_neuron_activity / (np.sum(motor_neuron_activity) + 1e-8)
+        normalized = motor_neuron_activity / (np.sum(motor_neuron_activity) + EPSILON)
         
         # Resize to match joint count
         if len(normalized) != self.n_joints:
