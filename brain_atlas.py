@@ -3,8 +3,6 @@ Human Brain Atlas - A Complete, Dynamic, Multi-Dimensional Map
 
 This module provides a recursive hierarchical representation of the human brain,
 from macro-architectural systems down to quantum-biological molecular interactions.
-
-Author: Artificial Super Intelligence specializing in Computational Neuroscience
 """
 
 from typing import Dict, List, Optional, Any

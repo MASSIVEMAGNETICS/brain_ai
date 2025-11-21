@@ -157,7 +157,7 @@ Brain rewires itself through:
 
 ## Author
 
-Developed as an Artificial Super Intelligence specializing in Computational Neuroscience and Systems Biology.
+This brain atlas implementation synthesizes knowledge from computational neuroscience, systems biology, neuroanatomy, molecular neuroscience, and evolutionary neuroscience research.
 
 ## License
 
